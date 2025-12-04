@@ -6,21 +6,23 @@ My Go solutions for [Advent of Code](https://adventofcode.com/) to share with fr
 
 ```
 aoc/
-├── cmd/aoc/main.go           # CLI entry point
+├── cmd/aoc/
+│   └── main.go               # CLI + Solution interface + registry
 ├── 2025/                     # Year folder
+│   ├── register.go           # Registers year's solutions via init()
 │   ├── day01/
-│   │   ├── day01.go          # Solution
-│   │   ├── day01_test.go     # Tests + benchmarks
+│   │   ├── solution.go       # Solution implementation
+│   │   ├── solution_test.go  # Tests + benchmarks
 │   │   ├── input.txt         # Puzzle input (gitignored)
-│   │   └── example.txt       # Input from public AOC example 
+│   │   └── example.txt       # Example from problem description
 │   ├── day02/
 │   │   └── ...
-├── shared/                   # Common utilities (year/day-agnostic)
+├── shared/                   # Common utilities
 │   └── ...
 ├── scripts/
-│   └── ...
+│   ├── newday.sh             # Generate new day scaffold
+│   └── newyear.sh            # Generate new year scaffold
 ├── go.mod
-├── go.sum (optional, for max reproducibility only)
 └── README.md
 ```
 
