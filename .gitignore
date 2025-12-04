@@ -19,6 +19,8 @@ dist/
 # --- OS junk ---
 .DS_Store
 Thumbs.db
+# -- Linux/WSL -- 
+*Zone.Identifier
 
 # --- Advent of Code inputs ---
 # Ignore all actual puzzle inputs (never commit them)
