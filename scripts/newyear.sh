@@ -25,15 +25,15 @@ cat > "$YEAR/register.go" << EOF
 package y$YEAR
 
 import (
-	"aoc/cmd/aoc"
+	"aoc/aoc"
 	// Add day imports as you solve them:
 	// "aoc/$YEAR/day01"
 )
 
 func init() {
 	// Register solutions as you solve them:
-	// main.Register($YEAR, 1, day01.Solution{})
-	_ = main.Solutions // remove when you add first day
+	// aoc.Register($YEAR, 1, day01.Solution{})
+	_ = aoc.Solutions // remove when you add first day
 }
 EOF
 

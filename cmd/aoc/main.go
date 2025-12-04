@@ -7,26 +7,12 @@ import (
 	"path/filepath"
 	"time"
 
+	aocpkg "aoc/aoc"
+
 	// Register years here (blank import to trigger init)
 	_ "aoc/2025"
 )
 
-// Solution interface that each day implements
-type Solution interface {
-	Part1(input string) any
-	Part2(input string) any
-}
-
-// Solutions maps year -> day -> solution
-var Solutions = make(map[int]map[int]Solution)
-
-// Register adds a solution to the registry
-func Register(year, day int, sol Solution) {
-	if Solutions[year] == nil {
-		Solutions[year] = make(map[int]Solution)
-	}
-	Solutions[year][day] = sol
-} 
 func main() {
 	year := flag.Int("year", 2025, "Year (2015-2025)")
 	day := flag.Int("day", 0, "Day to run (1-25)")
@@ -51,7 +37,7 @@ func main() {
 }
 
 func runDay(year, day int, useExample bool) {
-	solutions, ok := Solutions[year]
+	solutions, ok := aocpkg.Solutions[year]
 	if !ok {
 		fmt.Printf("Year %d: not implemented\n", year)
 		return
@@ -84,7 +70,7 @@ func runDay(year, day int, useExample bool) {
 }
 
 func runAll(year int) {
-	solutions, ok := Solutions[year]
+	solutions, ok := aocpkg.Solutions[year]
 	if !ok {
 		fmt.Printf("Year %d: not implemented\n", year)
 		return

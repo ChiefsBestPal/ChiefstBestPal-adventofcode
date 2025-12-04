@@ -7,7 +7,9 @@ My Go solutions for [Advent of Code](https://adventofcode.com/) to share with fr
 ```
 aoc/
 ├── cmd/aoc/
-│   └── main.go               # CLI + Solution interface + registry
+│   └── main.go               # CLI entry point
+├── aoc/
+│   └── aoc.go                # Solution interface + registry
 ├── 2025/                     # Year folder
 │   ├── register.go           # Registers year's solutions via init()
 │   ├── day01/
@@ -18,7 +20,8 @@ aoc/
 │   ├── day02/
 │   │   └── ...
 ├── shared/                   # Common utilities
-│   └── ...
+│   ├── math/                 # Math helpers (Mod, GCD, etc.)
+│   └── parser/               # Input parsing helpers
 ├── scripts/
 │   ├── newday.sh             # Generate new day scaffold
 │   └── newyear.sh            # Generate new year scaffold
