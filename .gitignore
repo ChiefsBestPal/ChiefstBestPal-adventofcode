@@ -1,0 +1,37 @@
+# --- Go build artifacts ---
+bin/
+dist/
+*.exe
+*.test
+*.out
+
+# --- Module/pkg caches (normally outside repo, but just in case) ---
+/vendor/
+/pkg/
+
+# --- IDE / Editor files ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
+
+# --- Advent of Code inputs ---
+# Ignore all actual puzzle inputs (never commit them)
+**/input.txt
+**/input-*.txt
+inputs/
+
+# Allow example.txt (small)
+!**/example.txt
+
+# --- Script artifacts ---
+*.log
+*.tmp
+
+# --- Optional: if you generate coverage ---
+coverage.out
