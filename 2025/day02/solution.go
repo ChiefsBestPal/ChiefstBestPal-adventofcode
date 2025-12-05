@@ -8,55 +8,79 @@ import (
 type Solution struct{}
 
 type Range struct {
-	Start int
-	End   int
+	Lo, Hi int
 }
 
 func Parse(input string) []Range {
-	input = strings.TrimSpace(input)
-	parts := strings.Split(input, ",")
-
 	var ranges []Range
-	for _, part := range parts {
+
+	line := strings.TrimSpace(input)
+	line = strings.TrimSuffix(line, ",")
+
+	for _, part := range strings.Split(line, ",") {
 		part = strings.TrimSpace(part)
 		if part == "" {
 			continue
 		}
 
 		bounds := strings.Split(part, "-")
-		start, _ := strconv.Atoi(bounds[0])
-		end, _ := strconv.Atoi(bounds[1])
-		ranges = append(ranges, Range{Start: start, End: end})
+		lo, _ := strconv.Atoi(bounds[0])
+		hi, _ := strconv.Atoi(bounds[1])
+		ranges = append(ranges, Range{Lo: lo, Hi: hi})
 	}
 
 	return ranges
 }
 
-// isInvalid checks if a product ID is invalid (digits repeated twice)
-func isInvalid(id int) bool {
-	s := strconv.Itoa(id)
-
-	// Must have even number of digits
+// isDoubled checks if a number is a pattern repeated twice (e.g., 1212, 5555, 123123)
+func isDoubled(n int) bool {
+	s := strconv.Itoa(n)
 	if len(s)%2 != 0 {
 		return false
 	}
-
-	// First half must equal second half
 	mid := len(s) / 2
-	firstHalf := s[:mid]
-	secondHalf := s[mid:]
+	return s[:mid] == s[mid:]
+}
 
-	return firstHalf == secondHalf
+// generateDoubled generates all doubled numbers up to maxVal
+// by iterating patterns: 1->11, 2->22, ..., 10->1010, 11->1111, etc.
+func generateDoubled(maxVal int) []int {
+	var result []int
+
+	for pattern := 1; ; pattern++ {
+		ps := strconv.Itoa(pattern)
+		doubled, _ := strconv.Atoi(ps + ps)
+
+		if doubled > maxVal {
+			break
+		}
+		result = append(result, doubled)
+	}
+
+	return result
 }
 
 func (Solution) Part1(input string) any {
 	ranges := Parse(input)
 
-	sum := 0
+	// Find max value across all ranges
+	maxVal := 0
 	for _, r := range ranges {
-		for id := r.Start; id <= r.End; id++ {
-			if isInvalid(id) {
-				sum += id
+		if r.Hi > maxVal {
+			maxVal = r.Hi
+		}
+	}
+
+	// Generate all possible doubled numbers up to max
+	doubled := generateDoubled(maxVal)
+
+	// Sum those that fall in any range
+	sum := 0
+	for _, d := range doubled {
+		for _, r := range ranges {
+			if d >= r.Lo && d <= r.Hi {
+				sum += d
+				break // Don't double-count if in multiple ranges
 			}
 		}
 	}

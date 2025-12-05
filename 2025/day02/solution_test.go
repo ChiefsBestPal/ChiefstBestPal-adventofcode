@@ -1,12 +1,8 @@
 package day02
 
-import (
-	"testing"
-)
+import "testing"
 
-const example = `11-22,95-115,998-1012,1188511880-1188511890,222220-222224,
-1698522-1698528,446443-446449,38593856-38593862,565653-565659,
-824824821-824824827,2121212118-2121212124`
+const example = `11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124`
 
 func TestPart1(t *testing.T) {
 	got := Solution{}.Part1(example)
@@ -26,33 +22,64 @@ func TestPart2(t *testing.T) {
 	}
 }
 
-func TestIsInvalid(t *testing.T) {
+func TestIsDoubled(t *testing.T) {
 	tests := []struct {
-		id   int
+		n    int
 		want bool
 	}{
-		{11, true},     // 1 repeated twice
-		{22, true},     // 2 repeated twice
-		{55, true},     // 5 repeated twice
-		{99, true},     // 9 repeated twice
-		{6464, true},   // 64 repeated twice
-		{123123, true}, // 123 repeated twice
-		{1010, true},   // 10 repeated twice
-		{1188511885, true}, // 11885 repeated twice
-		{222222, true}, // 222 repeated twice
-		{446446, true}, // 446 repeated twice
-		{38593859, true}, // 3859 repeated twice
-		{12, false},    // different digits
-		{101, false},   // odd number of digits
-		{1234, false},  // first half != second half
-		{1698522, false}, // not a repeated pattern
+		{11, true},
+		{22, true},
+		{55, true},
+		{99, true},
+		{1010, true},
+		{6464, true},
+		{123123, true},
+		{222222, true},
+		{1188511885, true},
+		{12, false},
+		{101, false},   // odd length
+		{1234, false},  // 12 != 34
+		{12345, false}, // odd length
 	}
 
 	for _, tt := range tests {
-		got := isInvalid(tt.id)
+		got := isDoubled(tt.n)
 		if got != tt.want {
-			t.Errorf("isInvalid(%d) = %v, want %v", tt.id, got, tt.want)
+			t.Errorf("isDoubled(%d) = %v, want %v", tt.n, got, tt.want)
 		}
+	}
+}
+
+func TestGenerateDoubled(t *testing.T) {
+	doubled := generateDoubled(100)
+	// Should be: 11, 22, 33, 44, 55, 66, 77, 88, 99
+	want := []int{11, 22, 33, 44, 55, 66, 77, 88, 99}
+
+	if len(doubled) != len(want) {
+		t.Errorf("generateDoubled(100) got %d items, want %d", len(doubled), len(want))
+		return
+	}
+
+	for i, v := range want {
+		if doubled[i] != v {
+			t.Errorf("generateDoubled(100)[%d] = %d, want %d", i, doubled[i], v)
+		}
+	}
+}
+
+func TestParse(t *testing.T) {
+	ranges := Parse("11-22,95-115")
+
+	if len(ranges) != 2 {
+		t.Fatalf("Parse() got %d ranges, want 2", len(ranges))
+	}
+
+	if ranges[0].Lo != 11 || ranges[0].Hi != 22 {
+		t.Errorf("ranges[0] = %v, want {11, 22}", ranges[0])
+	}
+
+	if ranges[1].Lo != 95 || ranges[1].Hi != 115 {
+		t.Errorf("ranges[1] = %v, want {95, 115}", ranges[1])
 	}
 }
 
