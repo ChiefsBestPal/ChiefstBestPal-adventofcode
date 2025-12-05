@@ -3,11 +3,12 @@ package y2025
 
 import (
 	"aoc/2025/day01"
+	"aoc/2025/day02"
 	"aoc/aoc"
 )
 
 func init() {
 	aoc.Register(2025, 1, day01.Solution{})
-	// Add more days as you solve them:
-	// aoc.Register(2025, 2, day02.Solution{})
+	aoc.Register(2025, 2, day02.Solution{})
+
 }
