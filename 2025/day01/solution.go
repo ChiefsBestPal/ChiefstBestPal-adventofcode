@@ -47,6 +47,21 @@ func (Solution) Part1(input string) any {
 }
 
 func (Solution) Part2(input string) any {
-	// TODO: implement when revealed
-	return 0
+	rotations := Parse(input)
+
+	pos := 50
+	count := 0
+	var remainder int
+	for _, r := range rotations {
+		remainder = r.Dist - (r.Dist/100)*100
+		if pos != 0 && ((r.Dir == -1 && pos <= remainder) || (r.Dir == 1 && (100-pos) <= remainder)) {
+			count++
+		}
+
+		count += r.Dist / 100 // Full turns
+
+		pos = math.Mod(pos+r.Dir*r.Dist, 100)
+	}
+
+	return count
 }
