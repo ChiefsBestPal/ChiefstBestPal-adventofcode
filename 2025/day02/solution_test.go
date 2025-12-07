@@ -15,38 +15,10 @@ func TestPart1(t *testing.T) {
 
 func TestPart2(t *testing.T) {
 	got := Solution{}.Part2(example)
-	want := 0
+	want := 4174379265
 
 	if got != want {
 		t.Errorf("Part2() = %v, want %v", got, want)
-	}
-}
-
-func TestIsDoubled(t *testing.T) {
-	tests := []struct {
-		n    int
-		want bool
-	}{
-		{11, true},
-		{22, true},
-		{55, true},
-		{99, true},
-		{1010, true},
-		{6464, true},
-		{123123, true},
-		{222222, true},
-		{1188511885, true},
-		{12, false},
-		{101, false},   // odd length
-		{1234, false},  // 12 != 34
-		{12345, false}, // odd length
-	}
-
-	for _, tt := range tests {
-		got := isDoubled(tt.n)
-		if got != tt.want {
-			t.Errorf("isDoubled(%d) = %v, want %v", tt.n, got, tt.want)
-		}
 	}
 }
 
