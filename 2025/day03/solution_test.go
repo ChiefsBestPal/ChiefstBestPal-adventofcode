@@ -7,6 +7,8 @@ const example = `987654321111111
 234234234234278
 818181911112111`
 
+const arbitrary_N_batteries = 5
+
 func TestPart1(t *testing.T) {
 	got := Solution{}.Part1(example)
 	want := 357
@@ -42,7 +44,7 @@ func TestMaxJoltage(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		got := maxJoltage(tt.bank)
+		got := maxJoltage(tt.bank, arbitrary_N_batteries)
 		if got != tt.want {
 			t.Errorf("maxJoltage(%q) = %v, want %v", tt.bank, got, tt.want)
 		}

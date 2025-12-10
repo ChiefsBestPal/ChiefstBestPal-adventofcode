@@ -24,7 +24,7 @@ func TestPart1(t *testing.T) {
 
 func TestPart2(t *testing.T) {
 	got := Solution{}.Part2(example)
-	want := 0
+	want := 43
 
 	if got != want {
 		t.Errorf("Part2() = %v, want %v", got, want)
