@@ -2,6 +2,8 @@
 
 My Go solutions for [Advent of Code](https://adventofcode.com/) to share with friends and coworkers.
 
+> Maybe in future extend this repo to include any small hackathons/code-competitions and not just aoc?
+
 ## Project Structure
 
 ```
@@ -19,8 +21,11 @@ aoc/
 │   │   └── example.txt       # Example from problem description
 │   ├── day02/
 │   │   └── ...
-├── shared/                   # Common utilities
+├── shared/                   # Common lobal/shared utilities
 │   ├── math/                 # Math helpers (Mod, GCD, etc.)
+│   ├── graph/                # Graphs, Trees, Traversals, Clustering
+│   ├── grid/                 # Grid/Matrix, Neighbours, 2D Paths
+│   ├── hashsets/             # Hashing, Ordering, Set DS
 │   └── parser/               # Input parsing helpers
 ├── scripts/
 │   ├── newday.sh             # Generate new day scaffold
@@ -29,14 +34,6 @@ aoc/
 └── README.md
 ```
 
-## Progress
-
-### 2025
-| Day | Stars | Notes |
-|-----|:-----:|-------|
-| 01  | ... | Safe dial |
-| 02  | | |
-| ... | | |
 ## Commands
 
 ```bash

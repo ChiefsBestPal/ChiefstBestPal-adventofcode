@@ -2,12 +2,20 @@ package day04
 
 import (
 	"aoc/shared/parser"
+	"runtime"
+	"sync"
 )
 
 type Solution struct{}
 
 type Point struct {
 	X, Y int
+}
+
+var directions = []Point{
+	{-1, -1}, {0, -1}, {1, -1},
+	{-1, 0}, {1, 0},
+	{-1, 1}, {0, 1}, {1, 1},
 }
 
 // Parse converts input into a 2D grid
@@ -27,12 +35,6 @@ func countAdjacentRolls(grid [][]rune, row, col int) int {
 	count := 0
 	rows := len(grid)
 	cols := len(grid[0])
-
-	// 8 directions: N, NE, E, SE, S, SW, W, NW
-	directions := []Point{
-		{-1, 0}, {-1, 1}, {0, 1}, {1, 1},
-		{1, 0}, {1, -1}, {0, -1}, {-1, -1},
-	}
 
 	for _, dir := range directions {
 		newRow := row + dir.X
@@ -68,6 +70,96 @@ func (Solution) Part1(input string) any {
 	return accessible
 }
 
+// findAccessible finds all accessible rolls (simple sequential version)
+func findAccessible(grid [][]rune) []Point {
+	rows := len(grid)
+	cols := len(grid[0])
+	var accessible []Point
+
+	for row := 0; row < rows; row++ {
+		for col := 0; col < cols; col++ {
+			if grid[row][col] == '@' {
+				if countAdjacentRolls(grid, row, col) < 4 {
+					accessible = append(accessible, Point{row, col})
+				}
+			}
+		}
+	}
+
+	return accessible
+}
+
+// findAccessibleConcurrent finds all accessible rolls in parallel
+func findAccessibleConcurrent(grid [][]rune) []Point {
+	rows := len(grid)
+	cols := len(grid[0])
+	numWorkers := runtime.NumCPU()
+
+	// Buffered Channel to collect results asynchronously from workers
+	resultCh := make(chan []Point, numWorkers)
+
+	// Divide rows among workers
+	rowsPerWorker := (rows + numWorkers - 1) / numWorkers
+
+	var wg sync.WaitGroup
+
+	for w := 0; w < numWorkers; w++ {
+		wg.Add(1)
+		startRow := w * rowsPerWorker
+		endRow := min((w+1)*rowsPerWorker, rows)
+
+		go func(start, end int) {
+			defer wg.Done()
+			var accessible []Point
+
+			for row := start; row < end; row++ {
+				for col := 0; col < cols; col++ {
+					if grid[row][col] == '@' {
+						if countAdjacentRolls(grid, row, col) < 4 {
+							accessible = append(accessible, Point{row, col})
+						}
+					}
+				}
+			}
+
+			resultCh <- accessible
+		}(startRow, endRow)
+	}
+
+	// Close channel when all workers done
+	go func() {
+		wg.Wait()
+		close(resultCh)
+	}()
+
+	// Collect all results
+	var allAccessible []Point
+	for accessible := range resultCh {
+		allAccessible = append(allAccessible, accessible...)
+	}
+
+	return allAccessible
+}
+
 func (Solution) Part2(input string) any {
-	return 0
+	grid := Parse(input)
+	totalRemoved := 0
+
+	for {
+		// Find all accessible rolls in parallel
+		accessible := findAccessible(grid)
+
+		if len(accessible) == 0 {
+			break
+		}
+
+		// Remove all accessible rolls
+		for _, p := range accessible {
+			grid[p.X][p.Y] = '.'
+		}
+
+		totalRemoved += len(accessible)
+	}
+
+	return totalRemoved
 }

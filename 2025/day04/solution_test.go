@@ -42,3 +42,7 @@ func BenchmarkPart2(b *testing.B) {
 		Solution{}.Part2(example)
 	}
 }
+
+// func BenchmarkPart2Concurrent(b *testing.B) {
+
+// }
