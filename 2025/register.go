@@ -7,6 +7,7 @@ import (
 	"aoc/2025/day03"
 	"aoc/2025/day04"
 	"aoc/2025/day05"
+	"aoc/2025/day06"
 	"aoc/aoc"
 )
 
@@ -16,5 +17,6 @@ func init() {
 	aoc.Register(2025, 3, day03.Solution{})
 	aoc.Register(2025, 4, day04.Solution{})
 	aoc.Register(2025, 5, day05.Solution{})
+	aoc.Register(2025, 6, day06.Solution{})
 
 }
