@@ -1,6 +1,7 @@
 package day05
 
 import (
+	interval "aoc/shared/intervals"
 	"aoc/shared/parser"
 	"strconv"
 	"strings"
@@ -8,12 +9,10 @@ import (
 
 type Solution struct{}
 
-type Range struct {
-	Lo, Hi int
-}
+type Range = interval.Range
 
 type Database struct {
-	FreshRanges []Range
+	FreshRanges   []Range
 	IngredientIDs []int
 }
 
@@ -62,5 +61,11 @@ func (Solution) Part1(input string) any {
 }
 
 func (Solution) Part2(input string) any {
-	return 0
+	db := Parse(input)
+	count := 0
+
+	for _, r := range interval.MergeUnsorted(db.FreshRanges) {
+		count += r.Size()
+	}
+	return count
 }

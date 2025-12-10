@@ -1,21 +1,20 @@
 package day02
 
 import (
+	interval "aoc/shared/intervals"
 	"math"
 	"slices"
-	"sort"
 	"strconv"
 	"strings"
 )
 
 type Solution struct{}
 
-type Range struct {
-	Lo, Hi int
-}
 type AccumulateNode struct {
 	Num, Sum int
 }
+
+type Range = interval.Range
 
 // Current optimization: Cache with hashed values and keys as binary search 'lst[i].Hi >= inserted.Lo'
 // TODO: Improve it using interval or segment trees to optimize BST
@@ -39,9 +38,7 @@ func Parse(input string) []Range {
 	}
 
 	// Sort ranges by Lo for binary search optimization
-	sort.Slice(ranges, func(i, j int) bool {
-		return ranges[i].Lo < ranges[j].Lo
-	})
+	interval.Sort(ranges)
 
 	return ranges
 }
@@ -160,37 +157,9 @@ func generateRepeated(maxVal int) (result []AccumulateNode) {
 	return result
 }
 
-// mergeRanges merges overlapping or adjacent ranges
-func mergeRanges(ranges []Range) []Range {
-	if len(ranges) == 0 {
-		return ranges
-	}
-
-	// Ranges are already sorted by Lo from Parse()
-	merged := []Range{ranges[0]}
-
-	for i := 1; i < len(ranges); i++ {
-		current := ranges[i]
-		last := &merged[len(merged)-1]
-
-		// Check if current overlaps or is adjacent to last merged range
-		if current.Lo <= last.Hi+1 {
-			// Merge: extend the last range's Hi if needed
-			if current.Hi > last.Hi {
-				last.Hi = current.Hi
-			}
-		} else {
-			// No overlap, add as new range
-			merged = append(merged, current)
-		}
-	}
-
-	return merged
-}
-
 func (Solution) Part2(input string) any {
 	ranges := Parse(input)
-	ranges = mergeRanges(ranges) // Merge overlapping ranges to avoid double-counting
+	ranges = interval.Merge(ranges) // Merge overlapping ranges to avoid double-counting
 
 	maxVal := 0
 	for _, r := range ranges {
