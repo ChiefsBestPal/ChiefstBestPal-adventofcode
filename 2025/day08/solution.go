@@ -124,12 +124,6 @@ func (Solution) Part1(input string) any {
 
 	for _, edge := range edges {
 		//fmt.Printf("Considering edge between point %d and %d with distance %.2f\n", points[edge.A], points[edge.B], edge.Distance)
-		// if uf.Union(edge.A, edge.B) {
-		// 	connections++
-		// 	if connections == 1000 {
-		// 		break
-		// 	}
-		// }
 		uf.Union(edge.A, edge.B)
 		connections++
 		if connections == 1000 {
@@ -157,5 +151,39 @@ func (Solution) Part1(input string) any {
 }
 
 func (Solution) Part2(input string) any {
-	return 0 // TODO
+	points := Parse(input)
+	n := len(points)
+
+	// Generate all edges
+	edges := make([]Edge, 0, n*(n-1)/2)
+	for i := 0; i < n; i++ {
+		for j := i + 1; j < n; j++ {
+			dist := points[i].DistanceTo(points[j])
+			edges = append(edges, Edge{A: i, B: j, Distance: dist})
+		}
+	}
+
+	// Sort edges by distance
+	slices.SortFunc(edges, func(a, b Edge) int {
+		if a.Distance < b.Distance {
+			return -1
+		} else if a.Distance > b.Distance {
+			return 1
+		}
+		return 0
+	})
+
+	// Connect the first 1000 shortest pairs
+	uf := NewUnionFind(n)
+	//connections := 0
+
+	for _, edge := range edges {
+		//fmt.Printf("Considering edge between point %d and %d with distance %.2f\n", points[edge.A], points[edge.B], edge.Distance)
+		uf.Union(edge.A, edge.B)
+		root := uf.Find(edge.A)
+		if uf.size[root] == n {
+			return points[edge.A].X * points[edge.B].X
+		}
+	}
+	return 0
 }

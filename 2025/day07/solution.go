@@ -1,6 +1,9 @@
 package day07
 
-import "aoc/shared/grid"
+import (
+	"aoc/shared/grid"
+	"sync"
+)
 
 type Solution struct{}
 
@@ -42,5 +45,75 @@ func (Solution) Part1(input string) any {
 }
 
 func (Solution) Part2(input string) any {
-	return 0
+	g := Parse(input)
+	start, found := g.Find(func(r rune) bool { return r == 'S' })
+	if !found {
+		return 0
+	}
+
+	var mu sync.Mutex
+	paths := make(map[grid.Point]int)
+	paths[grid.Point{X: start.X, Y: start.Y + 1}] = 1
+	timelines := 0
+
+	done := make(chan bool)
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	process := func() {
+		defer wg.Done()
+		for {
+			select {
+			case <-done:
+				return
+			default:
+			}
+
+			mu.Lock()
+			if len(paths) == 0 {
+				mu.Unlock()
+				return
+			}
+
+			current := make(map[grid.Point]int)
+			for k, v := range paths {
+				current[k] = v
+			}
+			paths = make(map[grid.Point]int)
+			mu.Unlock()
+
+			next := make(map[grid.Point]int)
+			exitCount := 0
+			for p, count := range current {
+				if !g.InBounds(p) {
+					exitCount += count
+					continue
+				}
+
+				cell := g.Get(p)
+				if cell == '.' || cell == 'S' {
+					next[grid.Point{X: p.X, Y: p.Y + 1}] += count
+				} else if cell == '^' {
+					next[grid.Point{X: p.X - 1, Y: p.Y + 1}] += count
+					next[grid.Point{X: p.X + 1, Y: p.Y + 1}] += count
+				}
+			}
+
+			mu.Lock()
+			timelines += exitCount
+			for p, count := range next {
+				paths[p] += count
+			}
+			mu.Unlock()
+		}
+	}
+
+	go process()
+	go process()
+
+	wg.Wait()
+	close(done)
+
+	return timelines
 }
