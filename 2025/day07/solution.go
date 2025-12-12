@@ -1,15 +1,8 @@
 package day07
 
-import (
-	"aoc/shared/grid"
-)
+import "aoc/shared/grid"
 
 type Solution struct{}
-
-type Beam struct {
-	Row, Col int
-	Dir      grid.Direction // Direction beam is traveling
-}
 
 func Parse(input string) *grid.Grid[rune] {
 	return grid.NewGridFromLines(input, func(r rune) rune { return r })
@@ -17,69 +10,37 @@ func Parse(input string) *grid.Grid[rune] {
 
 func (Solution) Part1(input string) any {
 	g := Parse(input)
-
-	// Find starting position 'S'
 	start, found := g.Find(func(r rune) bool { return r == 'S' })
 	if !found {
 		return 0
 	}
-	
-	// Track beams and splits
+
 	splitCount := 0
-	visited := make(map[Beam]bool) // Prevent infinite loops
-	
-	// BFS queue of beams (Point is X=col, Y=row in grid coordinates)
-	queue := []Beam{{Row: start.Y, Col: start.X, Dir: grid.South}}
+	visited := make(map[grid.Point]bool)
+	queue := []grid.Point{{X: start.X, Y: start.Y + 1}}
 
 	for len(queue) > 0 {
-		beam := queue[0]
+		p := queue[0]
 		queue = queue[1:]
 
-		// Check if already visited this beam state
-		if visited[beam] {
+		if visited[p] || !g.InBounds(p) {
 			continue
 		}
-		visited[beam] = true
+		visited[p] = true
 
-		// Move beam in its direction
-		next := beam
-		switch beam.Dir {
-		case grid.North:
-			next.Row--
-		case grid.South:
-			next.Row++
-		case grid.East:
-			next.Col++
-		case grid.West:
-			next.Col--
-		}
-
-		// Check if beam exits manifold
-		if !g.InBounds(grid.Point{X: next.Col, Y: next.Row}) {
-			continue
-		}
-
-		cell := g.Get(grid.Point{X: next.Col, Y: next.Row})
-		
-		// If empty space, continue beam
+		cell := g.Get(p)
 		if cell == '.' || cell == 'S' {
-			queue = append(queue, next)
-			continue
-		}
-		
-		// If splitter, create two new beams
-		if cell == '^' {
+			queue = append(queue, grid.Point{X: p.X, Y: p.Y + 1})
+		} else if cell == '^' {
 			splitCount++
-			// Create left and right beams from the splitter
-			leftBeam := Beam{Row: next.Row, Col: next.Col, Dir: grid.West}
-			rightBeam := Beam{Row: next.Row, Col: next.Col, Dir: grid.East}
-			queue = append(queue, leftBeam, rightBeam)
+			queue = append(queue, grid.Point{X: p.X - 1, Y: p.Y + 1})
+			queue = append(queue, grid.Point{X: p.X + 1, Y: p.Y + 1})
 		}
 	}
-	
+
 	return splitCount
 }
 
 func (Solution) Part2(input string) any {
-	return 0 // TODO
+	return 0
 }
